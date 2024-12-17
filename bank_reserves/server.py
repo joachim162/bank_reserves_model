@@ -53,13 +53,16 @@ def person_portrayal(agent):
 
 
 # dictionary of user settable parameters - these map to the model __init__ parameters
-model_params = {"init_people": UserSettableParameter("slider", "People", 25, 1, 200,
-                                                     description="Initial Number of People"),
-                "rich_threshold": UserSettableParameter("slider", "Rich Threshold", 10, 1, 20,
-                                                        description="Upper End of Random Initial Wallet Amount"),
-                "reserve_percent": UserSettableParameter("slider", "Reserves", 50, 1, 100,
-                                                         description="Percent of deposits the bank has to hold in reserve")
-                }
+model_params = {
+    "init_people": UserSettableParameter("slider", "People", 25, 1, 200,
+                                         description="Initial Number of People"),
+    "rich_threshold": UserSettableParameter("slider", "Rich Threshold", 10, 1, 20,
+                                            description="Upper End of Random Initial Wallet Amount"),
+    "reserve_percent": UserSettableParameter("slider", "Reserves", 50, 1, 100,
+                                             description="Percent of deposits the bank has to hold in reserve"),
+    "run_time": UserSettableParameter("number", "Run Time", 1000, 10, 10000,
+                                      description="Number of steps to run the model")
+}
 
 # set the portrayal function and size of the canvas for visualization
 canvas_element = CanvasGrid(person_portrayal, 20, 20, 500, 500)

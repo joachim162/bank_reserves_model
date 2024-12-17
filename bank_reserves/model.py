@@ -89,7 +89,7 @@ class BankReservesModel(Model):
     """init parameters "init_people", "rich_threshold", and "reserve_percent"
        are all UserSettableParameters"""
     def __init__(self, height=grid_h, width=grid_w, init_people=2, rich_threshold=10,
-                 reserve_percent=50,):
+                 reserve_percent=50, run_time=1000):
         self.height = height
         self.width = width
         self.init_people = init_people
@@ -98,6 +98,8 @@ class BankReservesModel(Model):
         # rich_threshold is the amount of savings a person needs to be considered "rich"
         self.rich_threshold = rich_threshold
         self.reserve_percent = reserve_percent
+        self.run_time = run_time  # Store run_time as an attribute
+        
         # see datacollector functions above
         self.datacollector = DataCollector(model_reporters={
                                            "Rich": get_num_rich_agents,
@@ -115,28 +117,41 @@ class BankReservesModel(Model):
 
         # create people for the model according to number of people set by user
         for i in range(self.init_people):
-            # set x coordinate as a random number within the width of the grid
             x = random.randrange(self.width)
-            # set y coordinate as a random number within the height of the grid
             y = random.randrange(self.height)
             p = Person(i, (x, y), self, True, self.bank, self.rich_threshold)
-            # place the Person object on the grid at coordinates (x, y)
             self.grid.place_agent(p, (x, y))
-            # add the Person object to the model schedule
             self.schedule.add(p)
 
+        # Explicitly set running to True
         self.running = True
+        self.current_step = 0
 
     def step(self):
-        # collect data
-        self.datacollector.collect(self)
-        # tell all the agents in the model to run their step function
-        self.schedule.step()
-        # if the step count is in the list then create a data file of model state
-        if self.schedule.steps in [100, 500, 1000]:
-            model_data = self.datacollector.get_model_vars_dataframe()
-            model_data.to_csv("BankReservesModel_Step_Data_Single_Run" + str(self.schedule.steps) + ".csv")
+        # Only step if the model is still running
+        if self.running:
+            # collect data
+            self.datacollector.collect(self)
+            # tell all the agents in the model to run their step function
+            self.schedule.step()
+            self.current_step += 1
 
-    def run_model(self):
-        for i in range(self.run_time):
+            # Optional: stop the model after a certain number of steps
+            if self.current_step >= self.run_time:
+                self.running = False
+
+            # if the step count is in the list then create a data file of model state
+            if self.current_step in [100, 500, 1000]:
+                model_data = self.datacollector.get_model_vars_dataframe()
+                model_data.to_csv(f"BankReservesModel_Step_Data_Single_Run{self.current_step}.csv")
+
+    def run_model(self, run_time=1000):
+        """
+        Run the model for a specified number of steps.
+        
+        Args:
+            run_time (int): Number of steps to run the model. Defaults to 1000.
+        """
+        for i in range(run_time):
+            print(f'Stepping {i}')
             self.step()
