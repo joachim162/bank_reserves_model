@@ -6,9 +6,9 @@ Vysoce abstrahovaný, zjednodušený model ekonomiky s jediným typem agenta a j
 
 ## 1. Naklonování repozitáře
 
-Nejprve naklonujte repozitář s projektem z GitHubu. Nahraďte `<url-repozitáře>` URL adresou vašeho repozitáře.
+Nejprve naklonujte repozitář s projektem z GitHubu.
 ```bash
-git clone https://github.com/username/Bank-Reserves-model
+git clone https://github.com/joachim162/bank_reserves_model
 cd Bank-Reserves-model
 ```
 
